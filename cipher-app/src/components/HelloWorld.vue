@@ -39,11 +39,17 @@
     <input id="vigenerePassphrase" type="string" v-model="vigenerePassphrase" placeholder="input">
     <p>Encryption is: {{ vigenereCipherEncrypt }}</p>
 
+    <h3>Decrypter</h3>
+    <label for="vigenereCipherText">Plaintext</label>
+    <input id="vigenereCipherText" type="string" v-model="vigenerePlaintext" placeholder="input">
+    <br/>
+    <p>Plaintext is: {{ vigenereCipherDecrypt }}</p>
   </div>
 </div>
 </template>
 
 <script>
+import dictionary from "../assets/documents/usa2.txt";
 export default {
   name: 'HelloWorld',
   data() {
@@ -55,7 +61,9 @@ export default {
       enigmaCipherText: 'wassd',
       enigmaPlaintext: 'hello',
       vigenerePlaintext: "access",
-      vigenerePassphrase: "secret"
+      vigenerePassphrase: "secret",
+      vigenereCipherText: "euzylleuitlvxtouwnfyoajcftzmzcftj",
+      dictionaryArray: dictionary,
     }
   },
   methods: {
@@ -115,6 +123,26 @@ export default {
         result += String.fromCharCode(sum);
       }
       return result;
+    },
+    vigenereDecrypt: function(cipherText) {
+      var result = "";
+      for (let word in dictionaryArray){
+        console.log(word);
+        var passphrase = word;
+        for (let i = 0; i < cipherText.length; i++) {
+          var sum = 0;
+          if (i > passphrase.length - 1) {    
+            sum = parseInt(cipherText[i].charCodeAt()) - parseInt(passphrase[i - passphrase.length].charCodeAt()) + 97;
+          } else  {
+            console.log(i);
+            sum = parseInt(cipherText[i].charCodeAt()) - parseInt(passphrase[i].charCodeAt()) + 97;
+          }
+          if (sum < 97) sum += 26
+          else if (sum > 122) sum -= 26
+          result += String.fromCharCode(sum);
+        }
+        return result;
+      }
     }
   },
   computed: {
@@ -129,6 +157,9 @@ export default {
     },
     vigenereCipherEncrypt: function(){
       return this.vigenereEncrypt(this.vigenerePlaintext, this.vigenerePassphrase)
+    },
+    vigenereCipherDecrypt: function(){
+      return this.vigenereDecrypt(this.vigenereCipherText)
     }
   }
 }
