@@ -66,10 +66,13 @@ export default {
       return result;
     },
     enigmaCheck: function(cipherText, plainText) {
+      if (plainText.length != cipherText.length){
+
+        return "No. Ciphertext and Plaintext are different lengths";
+      }
       for (let i = 0; i < plainText.length; i++) {
         if (plainText[i] == cipherText[i]){
-          console.log("Same letter at index" + i + ".");
-          return false;
+          return ("No. Same letter at index " + i + ".");
         } 
       }
       console.log("No same letters");
@@ -78,8 +81,7 @@ export default {
           console.log(i);
           if (plainText[i] == plainText[j] && cipherText[i] == cipherText[j]){
             console.log(plainText[i]+plainText[j]+","+cipherText[i]+cipherText[j])
-            console.log("Same letter reused.");
-            return false;
+            return ("No. Same letter reused.");
           }
         }
       }
@@ -102,6 +104,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+label {
+  padding-right: 1em;
+}
 
 input {
   margin-left: 2em;
