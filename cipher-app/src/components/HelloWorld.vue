@@ -16,6 +16,16 @@
     <input id="caesarDecryptKey" type="number" v-model="caesarDecryptKey" placeholder="0" max = 26 min = 0>
     <p>Decryption is: {{ caesarCipherDecrypt }}</p>
 
+    <h2>Enigma</h2>
+    <p>Enigma ciphers use random letter substitution, that does not repeat.</p>
+    <p>Decryption is very complicated so this will just check if the plaintext is a possible decryption of the cyphertext</p>
+    <label for="enigmaCipherText">Ciphertext</label>
+    <input id="enigmaCipherText" type="string" v-model="enigmaCipherText" placeholder="input">
+    <br/>
+    <label for="enigmaPlaintext">Plaintext</label>
+    <input id="enigmaPlaintext" type="string" v-model="enigmaPlaintext" placeholder="input">
+    <p>Possible match? {{enigmaMatch}}</p>
+
   </div>
 </template>
 
@@ -27,7 +37,9 @@ export default {
       caesarInput: 'message',
       caesarKey: 0,
       caesarDecryptInput: "ifmmp",
-      caesarDecryptKey: 0
+      caesarDecryptKey: 0,
+      enigmaCipherText: 'wassd',
+      enigmaPlaintext: 'hello'
     }
   },
   methods: {
@@ -37,6 +49,7 @@ export default {
       for (let i = 0; i < message.length; i++) {
         let charcode = (message[i].charCodeAt());
         var sum = parseInt(charcode) + parseInt(key);
+        if (sum > 122) sum -= 26
         result += String.fromCharCode(sum);
       }
       return result;
@@ -47,9 +60,30 @@ export default {
       for (let i = 0; i < message.length; i++) {
         let charcode = (message[i].charCodeAt());
         var sum = parseInt(charcode) - parseInt(key);
+        if (sum < 97) sum += 26
         result += String.fromCharCode(sum);
       }
       return result;
+    },
+    enigmaCheck: function(cipherText, plainText) {
+      for (let i = 0; i < plainText.length; i++) {
+        if (plainText[i] == cipherText[i]){
+          console.log("Same letter at index" + i + ".");
+          return false;
+        } 
+      }
+      console.log("No same letters");
+      for (let i = 0; i < plainText.length; i++) {
+        for (let j = (i+1); j < plainText.length - (1); j++){
+          console.log(i);
+          if (plainText[i] == plainText[j] && cipherText[i] == cipherText[j]){
+            console.log(plainText[i]+plainText[j]+","+cipherText[i]+cipherText[j])
+            console.log("Same letter reused.");
+            return false;
+          }
+        }
+      }
+      return true;
     }
   },
   computed: {
@@ -58,6 +92,9 @@ export default {
     },
     caesarCipherDecrypt: function(){
       return this.caesarDecrypt(this.caesarDecryptInput, this.caesarDecryptKey);
+    },
+    enigmaMatch: function(){
+      return this.enigmaCheck(this.enigmaCipherText, this.enigmaPlaintext);
     }
   }
 }
