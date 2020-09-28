@@ -1,6 +1,7 @@
 <template>
+<div class="container">
+  <h1>Cipher Checker App</h1>
   <div class="div1">
-    <h1>Cipher Checker App</h1>
     <h2>Caesar</h2>
     <p>Caesar ciphers apply a uniform shift to all letters in the word(s).</p>
     <h3>Encrypter</h3>
@@ -15,7 +16,8 @@
     <label for="caesarDecryptKey">Key</label>
     <input id="caesarDecryptKey" type="number" v-model="caesarDecryptKey" placeholder="0" max = 26 min = 0>
     <p>Decryption is: {{ caesarCipherDecrypt }}</p>
-
+  </div>
+  <div class="div1">
     <h2>Enigma</h2>
     <p>Enigma ciphers use random letter substitution, that does not repeat.</p>
     <p>Decryption is very complicated so this will just check if the plaintext is a possible decryption of the cyphertext</p>
@@ -25,7 +27,8 @@
     <label for="enigmaPlaintext">Plaintext</label>
     <input id="enigmaPlaintext" type="string" v-model="enigmaPlaintext" placeholder="input">
     <p>Possible match? {{enigmaMatch}}</p>
-
+  </div>
+  <div class="div1">
     <h2>Vigenère</h2>
     <p>Vigenère ciphers use a passphrase that maps a shift to each letter in the plain text.</p>
     <h3>Encrypter</h3>
@@ -37,6 +40,7 @@
     <p>Encryption is: {{ vigenereCipherEncrypt }}</p>
 
   </div>
+</div>
 </template>
 
 <script>
@@ -99,7 +103,13 @@ export default {
     vigenereEncrypt: function(plainText, passphrase) {
       var result = "";
       for (let i = 0; i < plainText.length; i++) {
-        var sum = parseInt(plainText[i].charCodeAt()) + parseInt(passphrase[i].charCodeAt()) - 97;
+        var sum = 0;
+        if (i > passphrase.length - 1) {    
+          sum = parseInt(plainText[i].charCodeAt()) + parseInt(passphrase[i - passphrase.length].charCodeAt()) - 97;
+        } else  {
+          console.log(i);
+          sum = parseInt(plainText[i].charCodeAt()) + parseInt(passphrase[i].charCodeAt()) - 97;
+        }
         if (sum < 97) sum += 26
         else if (sum > 122) sum -= 26
         result += String.fromCharCode(sum);
@@ -126,6 +136,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+h1 {
+  padding-top: 1em;
+}
 
 label {
   padding-right: 1em;
