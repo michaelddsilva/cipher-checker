@@ -26,6 +26,16 @@
     <input id="enigmaPlaintext" type="string" v-model="enigmaPlaintext" placeholder="input">
     <p>Possible match? {{enigmaMatch}}</p>
 
+    <h2>Vigenère</h2>
+    <p>Vigenère ciphers use a passphrase that maps a shift to each letter in the plain text.</p>
+    <h3>Encrypter</h3>
+    <label for="vigenerePlaintext">Plaintext</label>
+    <input id="vigenerePlaintext" type="string" v-model="vigenerePlaintext" placeholder="input">
+    <br/>
+    <label for="vigenerePassphrase">Passphrase</label>
+    <input id="vigenerePassphrase" type="string" v-model="vigenerePassphrase" placeholder="input">
+    <p>Encryption is: {{ vigenereCipherEncrypt }}</p>
+
   </div>
 </template>
 
@@ -39,7 +49,9 @@ export default {
       caesarDecryptInput: "ifmmp",
       caesarDecryptKey: 0,
       enigmaCipherText: 'wassd',
-      enigmaPlaintext: 'hello'
+      enigmaPlaintext: 'hello',
+      vigenerePlaintext: "access",
+      vigenerePassphrase: "secret"
     }
   },
   methods: {
@@ -75,17 +87,24 @@ export default {
           return ("No. Same letter at index " + i + ".");
         } 
       }
-      console.log("No same letters");
       for (let i = 0; i < plainText.length; i++) {
         for (let j = (i+1); j < plainText.length - (1); j++){
-          console.log(i);
           if (plainText[i] == plainText[j] && cipherText[i] == cipherText[j]){
-            console.log(plainText[i]+plainText[j]+","+cipherText[i]+cipherText[j])
-            return ("No. Same letter reused.");
+            return ("No. Same letter reused at index pair " + i +"," + j +".");
           }
         }
       }
       return true;
+    },
+    vigenereEncrypt: function(plainText, passphrase) {
+      var result = "";
+      for (let i = 0; i < plainText.length; i++) {
+        var sum = parseInt(plainText[i].charCodeAt()) + parseInt(passphrase[i].charCodeAt()) - 97;
+        if (sum < 97) sum += 26
+        else if (sum > 122) sum -= 26
+        result += String.fromCharCode(sum);
+      }
+      return result;
     }
   },
   computed: {
@@ -97,6 +116,9 @@ export default {
     },
     enigmaMatch: function(){
       return this.enigmaCheck(this.enigmaCipherText, this.enigmaPlaintext);
+    },
+    vigenereCipherEncrypt: function(){
+      return this.vigenereEncrypt(this.vigenerePlaintext, this.vigenerePassphrase)
     }
   }
 }
