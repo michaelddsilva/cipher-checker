@@ -40,16 +40,17 @@
     <p>Encryption is: {{ vigenereCipherEncrypt }}</p>
 
     <h3>Decrypter</h3>
-    <label for="vigenereCipherText">Plaintext</label>
-    <input id="vigenereCipherText" type="string" v-model="vigenerePlaintext" placeholder="input">
+    <label for="vigenereCipherText1">Plaintext</label>
+    <input id="vigenereCipherText1" type="string" v-model="vigenereCipherText1" placeholder="input">
     <br/>
-    <p>Plaintext is: {{ vigenereCipherDecrypt }}</p>
+    <label for="vigenerePassphrase1">Passphrase</label>
+    <input id="vigenerePassphrase1" type="string" v-model="vigenerePassphrase1" placeholder="input">
+    <p>Plaintext is: {{ vigenereCipherDecryptBasic }}</p>
   </div>
 </div>
 </template>
 
 <script>
-import dictionaryFile from "../assets/documents/usa2.txt";
 export default {
   name: 'HelloWorld',
   data() {
@@ -63,6 +64,8 @@ export default {
       vigenerePlaintext: "access",
       vigenerePassphrase: "secret",
       vigenereCipherText: "euzylleuitlvxtouwnfyoajcftzmzcftj",
+      vigenerePassphrase1: "secret",
+      vigenereCipherText1: "euzylleuitlvxtouwnfyoajcftzmzcftj",
     }
   },
   methods: {
@@ -122,38 +125,23 @@ export default {
       }
       return result;
     },
-    vigenereDecrypt: function(cipherText) {
+    vigenereDecryptBasic: function(cipherText, passphrase) {
       var result = "";
-
-      var dictionaryArray = dictionaryFile.split("\n");
-      
-      for (let word of dictionaryArray){
-        for (let i = 0; i < cipherText.length; i++) {
-          console.log(i + " " + "word: " + word + " " + dictionaryArray[i]);
-          var sum = 0;
-          var cipherTextLetterCharCode;
-          var passphraseLetterCharCode;
-          var index = i;
-          index = i%word.length;
-          //console.log(i + ">" + word.length + "; index:" + index + ";")
-          cipherTextLetterCharCode = cipherText[i].charCodeAt();
-          //console.log(i + " passphrase letter: " + word[i%word.length] + "; " + word);
-          passphraseLetterCharCode = word[index].charCodeAt();
-          //console.log("codes: " + cipherTextLetterCharCode + "," + passphraseLetterCharCode);
-          sum = parseInt(cipherTextLetterCharCode) - parseInt(passphraseLetterCharCode) + 97;
-          if (sum < 97) sum += 26
-          else if (sum > 122) sum -= 26
-          result += String.fromCharCode(sum);
-        }
-        for (let word in dictionaryArray) {
-          console.log(word + "=?" + result);
-          if (result == word) {
-            return word
-          }
-        }
+      for (let i = 0; i < cipherText.length; i++) {
+        var sum = 0;
+        var index = i%passphrase.length;
+        //console.log(i + ">" + word.length + "; index:" + index + ";")
+        var cipherTextLetterCharCode = cipherText[i].charCodeAt();
+        //console.log(i + " passphrase letter: " + word[i%word.length] + "; " + word);
+        var passphraseLetterCharCode = passphrase[index].charCodeAt();
+        //console.log("codes: " + cipherTextLetterCharCode + "," + passphraseLetterCharCode);
+        sum = parseInt(cipherTextLetterCharCode) - parseInt(passphraseLetterCharCode) + 97;
+        if (sum < 97) sum += 26
+        else if (sum > 122) sum -= 26
+        result += String.fromCharCode(sum);
       }
       return result;
-    }
+    },
   },
   computed: {
     caesarCipherEncrypt: function(){
@@ -168,9 +156,9 @@ export default {
     vigenereCipherEncrypt: function(){
       return this.vigenereEncrypt(this.vigenerePlaintext, this.vigenerePassphrase)
     },
-    vigenereCipherDecrypt: function(){
-      return this.vigenereDecrypt(this.vigenereCipherText)
-    }
+    vigenereCipherDecryptBasic: function() {
+      return this.vigenereDecryptBasic(this.vigenereCipherText1, this.vigenerePassphrase1)
+    },
   }
 }
 </script>
