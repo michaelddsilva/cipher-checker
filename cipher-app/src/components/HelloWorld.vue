@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import dictionary from "../assets/documents/usa2.txt";
+import dictionaryFile from "../assets/documents/usa2.txt";
 export default {
   name: 'HelloWorld',
   data() {
@@ -63,7 +63,6 @@ export default {
       vigenerePlaintext: "access",
       vigenerePassphrase: "secret",
       vigenereCipherText: "euzylleuitlvxtouwnfyoajcftzmzcftj",
-      dictionaryArray: dictionary,
     }
   },
   methods: {
@@ -115,7 +114,6 @@ export default {
         if (i > passphrase.length - 1) {    
           sum = parseInt(plainText[i].charCodeAt()) + parseInt(passphrase[i - passphrase.length].charCodeAt()) - 97;
         } else  {
-          console.log(i);
           sum = parseInt(plainText[i].charCodeAt()) + parseInt(passphrase[i].charCodeAt()) - 97;
         }
         if (sum < 97) sum += 26
@@ -126,23 +124,35 @@ export default {
     },
     vigenereDecrypt: function(cipherText) {
       var result = "";
-      for (let word in dictionaryArray){
-        console.log(word);
-        var passphrase = word;
+
+      var dictionaryArray = dictionaryFile.split("\n");
+      
+      for (let word of dictionaryArray){
         for (let i = 0; i < cipherText.length; i++) {
+          console.log(i + " " + "word: " + word + " " + dictionaryArray[i]);
           var sum = 0;
-          if (i > passphrase.length - 1) {    
-            sum = parseInt(cipherText[i].charCodeAt()) - parseInt(passphrase[i - passphrase.length].charCodeAt()) + 97;
-          } else  {
-            console.log(i);
-            sum = parseInt(cipherText[i].charCodeAt()) - parseInt(passphrase[i].charCodeAt()) + 97;
-          }
+          var cipherTextLetterCharCode;
+          var passphraseLetterCharCode;
+          var index = i;
+          index = i%word.length;
+          //console.log(i + ">" + word.length + "; index:" + index + ";")
+          cipherTextLetterCharCode = cipherText[i].charCodeAt();
+          //console.log(i + " passphrase letter: " + word[i%word.length] + "; " + word);
+          passphraseLetterCharCode = word[index].charCodeAt();
+          //console.log("codes: " + cipherTextLetterCharCode + "," + passphraseLetterCharCode);
+          sum = parseInt(cipherTextLetterCharCode) - parseInt(passphraseLetterCharCode) + 97;
           if (sum < 97) sum += 26
           else if (sum > 122) sum -= 26
           result += String.fromCharCode(sum);
         }
-        return result;
+        for (let word in dictionaryArray) {
+          console.log(word + "=?" + result);
+          if (result == word) {
+            return word
+          }
+        }
       }
+      return result;
     }
   },
   computed: {
